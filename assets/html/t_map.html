@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>최적화3</title>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://apis.openapi.sk.com/tmap/jsv2?version=1&appKey=l7xx33dbed536be1496fbafed741d15fa744"></script>
+    <script>
+
+        function initTmap() {
+            window.addEventListener('flutterInAppWebViewPlatformReady', function (event) {
+                window.flutter_inappwebview.callHandler('setPosition').then(function (result) {
+                console.log('result'+ result);
+                    var positions = [{ "title": "포이엔", "lat": 37.545132, "lng": 127.063951, "state": 20 },
+                    { "title": "브랫서울", "lat": 37.54653, "lng": 127.07504, "state": 0 },
+                    { "title": "알파카페", "lat": 37.55126, "lng": 127.04646, "state": 0 },
+                    { "title": "커피오스(서울숲)", "lat": 37.54195, "lng": 127.04849, "state": 0 },
+                    { "title": "플록스", "lat": 37.53754, "lng": 127.05376, "state": 0 },
+                    { "title": "대림창고", "lat": 37.54179, "lng": 127.05648, "state": 0 },
+                    { "title": "진이", "lat": 37.5419, "lng": 127.0606, "state": 0 },
+
+                    { "title": "공장", "lat": 37.547689570605606, "lng": 127.05901493137947, "state": 21 }];
+                    // 1. 지도 띄우기
+                    map = new Tmapv2.Map("map_div", {
+                        center: new Tmapv2.LatLng(37.5450340188235, 127.06390016463332),
+                        width: "100%",
+                        height: "800px",
+                        zoom: 15,
+                        zoomControl: true,
+                        scrollwheel: true
+                    });
+
+
+
+                    // 2. 시작, 도착 심볼찍기
+                    var drawInfoArr = [];
+
+                    var pointArray = [];
+                    var end = positions.length - 1;
+                    for (var i = 0; i < positions.length; i++) {
+                        var title = positions[i].title;
+                        var label = "<span style='background-color: #46414E;color:white'>" + title + "</span>";
+                        switch (positions[i].state) {
+                            case 20: marker_s = new Tmapv2.Marker(
+                                {
+                                    position: new Tmapv2.LatLng(positions[i].lat, positions[i].lng),
+                                    icon: "http://tmapapi.sktelecom.com/upload/tmap/marker/pin_b_b_s.png",
+                                    iconSize: new Tmapv2.Size(24, 38),
+                                    map: map,
+                                    title: title,
+                                });
+                                break;
+                            case 0: new Tmapv2.Marker(
+                                {
+                                    position: new Tmapv2.LatLng(positions[i].lat, positions[i].lng),
+                                    icon: "../images/markerStandby.png",
+                                    iconSize: new Tmapv2.Size(35, 35),
+                                    map: map
+                                });
+                                break;
+                            case 11: new Tmapv2.Marker(
+                                {
+                                    position: new Tmapv2.LatLng(positions[i].lat, positions[i].lng),
+                                    icon: "../images/markerStandby.png",
+                                    iconSize: new Tmapv2.Size(24, 38),
+                                    map: map
+                                });
+                                break;
+                            case 10: new Tmapv2.Marker(
+                                {
+                                    position: new Tmapv2.LatLng(positions[i].lat, positions[i].lng),
+                                    icon: "http://tmapapi.sktelecom.com/upload/tmap/marker/pin_r_m_" + i + ".png",
+                                    iconSize: new Tmapv2.Size(24, 38),
+                                    map: map
+                                });
+                                break;
+                            case 21: marker_e = new Tmapv2.Marker(
+                                {
+                                    position: new Tmapv2.LatLng(positions[i].lat, positions[i].lng),
+                                    icon: "http://tmapapi.sktelecom.com/upload/tmap/marker/pin_b_b_e.png",
+                                    iconSize: new Tmapv2.Size(24, 38),
+                                    map: map
+                                });
+                                break;
+                        }
+
+                    }
+
+
+                    var passList = "";
+                    var passData = "";
+                    // // 3. 경유지 심볼 찍기
+                    for (var i = 1; i < positions.length - 1; i++) {
+
+                        passData = passData + positions[i].lng + "," + positions[i].lat + "_";
+                        passList = passData.substring(0, passData.length - 1);
+
+                    }
+
+
+
+                    // 4. 경로탐색 API 사용요청
+                    var startX = positions[0].lng.toString();
+                    var startY = positions[0].lat.toString();
+                    var endX = positions[end].lng.toString();
+                    var endY = positions[end].lat.toString();
+                    var passList = passList;
+                    var prtcl;
+                    var viaPoint = [];
+                    viaPoint.clear;
+                    for (var i = 1; i < positions.length - 1; i++) {
+                        viaPoint.push({
+                            "viaPointId": positions[i].title,
+                            "viaPointName": positions[i].title,
+                            "viaX": positions[i].lng.toString(),
+                            "viaY": positions[i].lat.toString(),
+
+                        });
+                    }
+                    console.log(viaPoint);
+                    console.log(startX);
+                    var headers = {};
+                    headers["appKey"] = "l7xx33dbed536be1496fbafed741d15fa744";
+                    $.ajax({
+                        type: "POST",
+                        headers: headers,
+                        url: "https://apis.openapi.sk.com/tmap/routes/routeOptimization10?version=1&format=json",//
+
+                        contentType: "application/json",
+                        data: JSON.stringify({
+                            "reqCoordType": "WGS84GEO",
+                            "resCoordType": "EPSG3857",
+                            "startName": "출발",
+                            "startX": startX,
+                            "startY": startY,
+                            "startTime": "202203221330",
+                            "endName": "도착",
+                            "endX": endX,
+                            "endY": endY,
+                            "searchOption": "0",
+                            "carType": "1",
+                            "viaPoints": viaPoint
+                            //   [
+                            //     {
+                            //       "viaPointId": positions[1].title,
+                            //       "viaPointName": positions[1].title,
+                            //       "viaX": positions[1].lng.toString(),
+                            //       "viaY": positions[1].lat.toString(),
+
+                            //     },
+                            //     {
+                            //       "viaPointId": positions[2].title,
+                            //       "viaPointName": positions[2].title,
+                            //       "viaX": positions[2].lng.toString(),
+                            //       "viaY": positions[2].lat.toString(),
+
+                            //     },
+                            //     {
+                            //       "viaPointId": positions[3].title,
+                            //       "viaPointName": positions[3].title,
+                            //       "viaX": positions[3].lng.toString(),
+                            //       "viaY": positions[3].lat.toString(),
+
+                            //     },
+                            //     {
+                            //       "viaPointId": positions[4].title,
+                            //       "viaPointName": positions[4].title,
+                            //       "viaX": positions[4].lng.toString(),
+                            //       "viaY": positions[4].lat.toString(),
+
+                            //     },
+                            //     {
+                            //       "viaPointId": positions[5].title,
+                            //       "viaPointName": positions[5].title,
+                            //       "viaX": positions[5].lng.toString(),
+                            //       "viaY": positions[5].lat.toString(),
+
+                            //     },
+                            // 	{
+                            //       "viaPointId": positions[6].title,
+                            //       "viaPointName": positions[6].title,
+                            //       "viaX": positions[6].lng.toString(),
+                            //       "viaY": positions[6].lat.toString(),
+
+                            //     },
+                            // ]
+                        }),
+                        success: function (response) {
+                            var resultData = response.properties;
+                            var resultFeatures = response.features;
+                            var resultList = [];
+                            // 결과 출력
+                            var tDistance = "총 거리 : " + resultData.totalDistance / 1000 + "km,  ";
+                            var tTime = "총 시간 : " + Math.ceil(resultData.totalTime / 60) + "분,  ";
+                            var tFare = "총 요금 : " + resultData.totalFare + "원";
+                            console.log(resultFeatures);
+                            $("#result").text(tDistance + tTime + tFare);
+                            resultList.clear;
+                            for (var i in resultFeatures) {
+                                var geometry = resultFeatures[i].geometry;
+                                var properties = resultFeatures[i].properties;
+                                var polyline_;
+
+                                if (geometry.type == "Point") {
+                                    resultList.push(resultFeatures[i]);
+                                }
+                                drawInfoArr = [];
+
+                                if (geometry.type == "LineString") {
+                                    for (var j in geometry.coordinates) {
+                                        // 경로들의 결과값(구간)들을 포인트 객체로 변환
+                                        var latlng = new Tmapv2.Point(geometry.coordinates[j][0], geometry.coordinates[j][1]);
+                                        // 포인트 객체를 받아 좌표값으로 변환
+                                        var convertPoint = new Tmapv2.Projection.convertEPSG3857ToWGS84GEO(latlng);
+                                        // 포인트객체의 정보로 좌표값 변환 객체로 저장
+                                        var convertChange = new Tmapv2.LatLng(convertPoint._lat, convertPoint._lng);
+
+                                        drawInfoArr.push(convertChange);
+                                    }
+
+                                    polyline_ = new Tmapv2.Polyline({
+                                        path: drawInfoArr,
+                                        strokeColor: "#FF0000",
+                                        strokeWeight: 6,
+                                        direction: true,
+                                        map: map
+                                    });
+                                }
+
+                            }
+                            console.log(resultList);
+                        },
+                        error: function (request, status, error) {
+                            console.log("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
+                        }
+                    });
+                });
+            });
+        }
+
+
+
+    </script>
+</head>
+
+<body onload="initTmap();">
+
+
+<div id="map_wrap" class="map_wrap"></div>
+<div id="map_div"></div>
+</div>
+
+<p id="result"></p>
+<br />
+</body>
+
+</html>
