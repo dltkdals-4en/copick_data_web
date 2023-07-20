@@ -1,3 +1,4 @@
+import 'package:copick_data_web/providers/enter_volumes_provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -12,6 +13,8 @@ class HomeHeaderWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var data = Provider.of<GetDataProvider>(context);
+    var size = MediaQuery.of(context).size;
+    var enter = Provider.of<EnterVolumesProvider>(context);
     return Container(
       color: Colors.white,
       child: Padding(
@@ -21,30 +24,42 @@ class HomeHeaderWidget extends StatelessWidget {
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.max,
               children: [
-                Text.rich(
-                  TextSpan(
-                    text: "오늘 수거량 입력할 장소는 ",
-                    style: kHeaderTextStyle.copyWith(
-                        fontWeight: FontWeight.w500),
-                    children: [
-                      TextSpan(
-                        text: '${data.taskList.length}${"곳"}',
-                        style: kHeaderTextStyle.copyWith(
-                            fontWeight: FontWeight.w700,
-                            color: KColors.lightPrimary),
-                      ),
-                      TextSpan(text: "이 있어요"),
-                    ],
-                  ),
-                ),//일정 text
+                Container(
+                  width: size.width / 2,
+                  child: (enter.selectedTeam == "선택 안됨")
+                      ? Text(
+                          '수거 팀을 선택해주세요.',
+                          style: kHeaderTextStyle.copyWith(
+                              fontWeight: FontWeight.w500),
+                        )
+                      : Text.rich(
+                          TextSpan(
+                            text: "오늘 ${enter.selectedTeam}의 수거량 입력할 장소는 ",
+                            style: kHeaderTextStyle.copyWith(
+                                fontWeight: FontWeight.w500),
+                            children: [
+                              TextSpan(
+                                text: '${enter.taskListTeam.length}${"곳"}',
+                                style: kHeaderTextStyle.copyWith(
+                                    fontWeight: FontWeight.w700,
+                                    color: KColors.lightPrimary),
+                              ),
+                              TextSpan(text: "이 있어요"),
+                            ],
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
+                ), //일정 text
                 Text.rich(
                   TextSpan(
                     text: '',
                     // home.doneVolumesLength().toString(),
-                    style: kHeaderTextStyle.copyWith(
-                        color: KColors.lightPrimary),
+                    style:
+                        kHeaderTextStyle.copyWith(color: KColors.lightPrimary),
                     children: [
                       TextSpan(
                         text: '',
@@ -53,7 +68,27 @@ class HomeHeaderWidget extends StatelessWidget {
                       )
                     ],
                   ),
-                ), //개수표시
+                ),
+                SizedBox(
+                  width: ((size.width - NORMALGAP * 4) / 3),
+                  height: 60,
+                  child: DropdownButton(
+                    style: kBtnTextStyle.copyWith(color: KColors.black),
+                    isExpanded: true,
+                    value: enter.selectedTeam,
+                    items: enter.teamList.map((e) {
+                      return DropdownMenuItem(
+                        value: e,
+                        child: Text(e),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      enter.changeTeam(value);
+
+                      // dataProvider.changeTeamTask(value, tabIndex);
+                    },
+                  ),
+                ),
               ],
             ),
             // (home.doneVolumesLength() == home.volumesList.length)

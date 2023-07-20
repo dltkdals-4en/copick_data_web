@@ -67,94 +67,6 @@ class GetDataProvider with ChangeNotifier {
     }
   }
 
-  Future<void> getGatheringData() async {
-    final db = await DbHelper().database;
-    gatheringList.clear();
-    if (haveGatheringData == false) {
-      await db!
-          .rawQuery('delete from gathering_place')
-          .then((value) async => await FbHelper().getGathering().then((value) {
-                value.docs.forEach((element) {
-                  gatheringList.add(
-                      GatheringPlaceModel.fromJson(element.data(), element.id));
-                });
-              }).then((value) async {
-                await db
-                    .rawQuery('select * from gathering_place')
-                    .then((value) {
-                  if (value.isEmpty) {
-                    gatheringList.forEach((element) {
-                      db.insert('gathering_place', element.toMap());
-                    });
-                  }
-                }).then((value) {
-                  haveGatheringData = true;
-                  notifyListeners();
-                });
-              }));
-    }
-  }
-
-  Future<void> getWasteLocationData() async {
-    if (haveWasteLocationData == false) {
-      await FbHelper().getLocData().then((value) {
-        wasteLocationList.clear();
-        value.docs.forEach((element) {
-          wasteLocationList
-              .add(WasteLocationModel.fromJson(element.data(), element.id));
-        });
-      }).whenComplete(() async {
-        print('location: ${wasteLocationList.length}');
-        haveWasteLocationData = true;
-        notifyListeners();
-      });
-    }
-  }
-
-  Future<void> getPickTaskData() async {
-    if (havePickTaskData == false) {
-      await FbHelper().getTaskData().then((value) {
-        pickTaskList.clear();
-        for (var element in value.docs) {
-          pickTaskList.add(PickTaskModel.fromJson(element.data(), element.id));
-        }
-      }).whenComplete(() {
-        print('task ${pickTaskList.length}');
-        havePickTaskData = true;
-        notifyListeners();
-      });
-    }
-  }
-
-  Future<void> getCardData() async {
-    if (haveCardData == false) {
-      cardDataList.clear();
-      pickTaskList.forEach((element) {
-        cardDataList.add(CardDataModel(
-          locationId: element.locationId,
-          locationName: wasteLocationList
-              .firstWhere((e) => e.locationId == element.locationId)
-              .locationName,
-          condition: element.condition,
-          pickUpDate: element.pickUpDate,
-          pickOrder: element.pickOrder,
-          track: element.track,
-          team: element.team,
-        ));
-      });
-    }
-  }
-
-  Future<void> fbGetTaskData() async {
-    await FbHelper().getTaskDummyData().then((value) {
-      for (var element in value.docs) {
-        pickTaskList.add(PickTaskModel.fromJson(element.data(), element.id));
-      }
-    });
-  }
-
-  Future<void> fbUpdateTask() async {}
-
   Future<void> fbUpdateAllCondition() async {
     await _firestore.collection('pick_task_anseong').get().then((data) {
       data.docs.forEach((element) async {
@@ -222,16 +134,11 @@ class GetDataProvider with ChangeNotifier {
     });
   }
 
-  Future<void> updateVolumes(CardDataModel card, String volumes) async {
+  Future<void> updateVolumes(PickTaskModel card, String volumes) async {
     var totalVolumes = double.parse(volumes);
-    final db = await DbHelper().database;
-    await db!
-        .rawQuery(
-            "update pick_task set pick_total_waste = $totalVolumes  where pick_doc_id = '${card.pickDocId}'")
-        .then((value) async {
-      await FbHelper().updateVolumes(card, totalVolumes).then((value) async {
-        notifyListeners();
-      });
+
+    await FbHelper().updateVolumes(card, totalVolumes).then((value) async {
+      notifyListeners();
     });
   }
 
@@ -258,5 +165,9 @@ class GetDataProvider with ChangeNotifier {
     haveCardData = false;
     haveGatheringData = false;
     notifyListeners();
+  }
+
+  List<PickTaskModel> getTaskTeamList() {
+    return taskList.where((element) => element.condition == 1).toList();
   }
 }

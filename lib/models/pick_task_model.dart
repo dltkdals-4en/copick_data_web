@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
-import 'package:firebase_storage/firebase_storage.dart' as storage;
 
 class PickTaskModel {
   String? pickDocId;
   int? pickOrder;
   String? locationId;
+  String? locationName;
   int? condition;
   int? track;
   String? team;
@@ -20,6 +20,7 @@ class PickTaskModel {
     this.pickDocId,
     this.pickOrder,
     this.locationId,
+    this.locationName,
     this.condition,
     this.track,
     this.team,
@@ -36,6 +37,7 @@ class PickTaskModel {
       'track': this.track,
       'condition': this.condition,
       'location_id': this.locationId,
+      'location_name' : this.locationName,
       'team': this.team,
       'pick_total_waste': this.totalVolume,
       // 'pick_details': this.pickDetails,
@@ -51,6 +53,7 @@ class PickTaskModel {
     track = json['track'];
     condition = json['condition'];
     locationId = json['location_id'];
+    locationName= json['location_name'];
     team = json['team'];
     pickUpDate = (json['pick_up_date'] != null)?dateFormat(json['pick_up_date']):dateFormat(Timestamp.fromDate(DateTime.now()));
     // pickDetails = json['pick_details'].toString();

@@ -52,7 +52,7 @@ const SizedBox kSmW = SizedBox(
 
 const mainPadding = EdgeInsets.fromLTRB(20, 20, 20, 20);
 
-const double CARDHEIGHT = 140;
+const double CARDHEIGHT = 160;
 
 const double BIGGAP = 40;
 const double NORMALGAP = 20;

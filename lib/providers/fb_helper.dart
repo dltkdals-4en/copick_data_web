@@ -54,7 +54,7 @@ class FbHelper {
         .update({'condition': condition});
   }
 
-  Future<void> updateVolumes(CardDataModel card, double volumes) async {
+  Future<void> updateVolumes(PickTaskModel card, double volumes) async {
     print('fb_update_volumes');
     await _firestore.collection('volume_record_anseong').add({
       'location_id': card.locationId,
