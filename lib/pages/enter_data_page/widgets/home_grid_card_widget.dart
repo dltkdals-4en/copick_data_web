@@ -68,81 +68,81 @@ class HomeGridCardWidget extends StatelessWidget {
                     : SizedBox()
               ],
             ),
-            (card.totalVolume == null || card.totalVolume == 0)
-                ? Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Text(
-                            '수거량:',
-                            style: kLabelTextStyle,
-                          ),
-                          kNorW,
-                          (enter.openIndex != index)
-                              ? Text(
-                                  '${enter.volumesText(card.totalVolume)}',
-                                  style: kLabelTextStyle,
-                                )
-                              : Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: [
-                                    Container(
-                                      width: size.width/10-20,
-                                      child: TextField(
-                                        keyboardType:
-                                            TextInputType.numberWithOptions(
-                                                decimal: true),
-                                        inputFormatters: <TextInputFormatter>[
-                                          FilteringTextInputFormatter.allow(
-                                              RegExp(r'^[0-9]+.?[0-9]*'))
-                                        ],
-                                        decoration: InputDecoration(
-                                          hintText: enter.volumes,
-                                          fillColor: KColors.whiteGrey,
-                                          filled: true,
-                                        ),
-                                        style: kContentTextStyle,
-                                        textAlign: TextAlign.end,
-                                        onChanged: (value) {
-                                          enter.changeVolumes(value);
-                                          // home.sortVolumesList();
-                                        },
-                                      ),
-                                    ),
-                                    kSmW,
-                                    Text(
-                                      'Kg',
-                                      style: kBtnTextStyle.copyWith(
-                                          color: KColors.black),
-                                    ),
-                                  ],
-                                ),
-                        ],
-                      ),
-                      kNorH,
-                      DataInsertBtn(index),
-                    ],
-                  )
-                : ElevatedButton(
-                    onPressed: () {
-                      enter.changeOpenIndex(index);
-                      enter.changeVolumes(card.totalVolume.toString());
-                    },
-                    style: ElevatedButton.styleFrom(
-                        fixedSize: Size(cardWidth / 3, 80),
-                        backgroundColor: KColors.lightPrimary,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(SMALLGAP))),
-                    child: Text(
-                      '수거량 변경',
-                      style: kBtnTextStyle.copyWith(
-                        fontSize: 22,
-                        color: KColors.white,
-                      ),
+
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Text(
+                      '수거량:',
+                      style: kLabelTextStyle,
                     ),
-                  ),
+                    kNorW,
+                    (enter.openIndex != index)
+                        ? Text(
+                            '${enter.volumesText(card.totalVolume)}',
+                            style: kLabelTextStyle,
+                          )
+                        : Row(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              Container(
+                                width: size.width / 10 - 20,
+                                child: TextField(
+                                  keyboardType: TextInputType.numberWithOptions(
+                                      decimal: true),
+                                  inputFormatters: <TextInputFormatter>[
+                                    FilteringTextInputFormatter.allow(
+                                        RegExp(r'^[0-9]+.?[0-9]*'))
+                                  ],
+                                  decoration: InputDecoration(
+                                    hintText: enter.volumes,
+                                    fillColor: KColors.whiteGrey,
+                                    filled: true,
+                                  ),
+                                  style: kContentTextStyle,
+                                  textAlign: TextAlign.end,
+                                  onChanged: (value) {
+                                    enter.changeVolumes(value);
+                                    // home.sortVolumesList();
+                                  },
+                                ),
+                              ),
+                              kSmW,
+                              Text(
+                                'Kg',
+                                style: kBtnTextStyle.copyWith(
+                                    color: KColors.black),
+                              ),
+                            ],
+                          ),
+                  ],
+                ),
+                kNorH,
+                (card.totalVolume == null || card.totalVolume == 0)
+                    ? DataInsertBtn(index)
+                    : ElevatedButton(
+                        onPressed: () {
+                          enter.changeOpenIndex(index);
+                          enter.changeVolumes(card.totalVolume.toString());
+                        },
+                        style: ElevatedButton.styleFrom(
+                          fixedSize: Size(cardWidth, 80),
+                          backgroundColor: KColors.lightPrimary,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(SMALLGAP),
+                          ),
+                        ),
+                        child: Text(
+                          '수거량 변경하기',
+                          style: kBtnTextStyle.copyWith(),
+                        ),
+                      ),
+              ],
+            )
+
             // (enter.openIndex != index)
             //     ? SizedBox()
             //     : Column(

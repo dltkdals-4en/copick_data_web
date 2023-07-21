@@ -35,6 +35,7 @@ class EnterVolumesProvider with ChangeNotifier {
     print('init');
     volumes = '0';
     openIndex = -1;
+    print('$volumes // $openIndex');
     notifyListeners();
   }
 
@@ -93,6 +94,7 @@ class EnterVolumesProvider with ChangeNotifier {
     } else {
       taskListTeam = taskTotal;
     }
+    taskListTeam.sort((a, b) => a.totalVolume!.compareTo(b.totalVolume!),);
   }
 
   String getBtnText(int index) {
@@ -119,6 +121,7 @@ class EnterVolumesProvider with ChangeNotifier {
 
   void saveVolumes(int index) {
     taskListTeam[index].totalVolume = double.parse(volumes);
+    init();
     notifyListeners();
   }
 }

@@ -137,7 +137,7 @@ class GetDataProvider with ChangeNotifier {
   Future<void> updateVolumes(PickTaskModel card, String volumes) async {
     var totalVolumes = double.parse(volumes);
 
-    await FbHelper().updateVolumes(card, totalVolumes).then((value) async {
+    await FbHelper().updateVolumes1(card, totalVolumes).then((value) async {
       notifyListeners();
     });
   }

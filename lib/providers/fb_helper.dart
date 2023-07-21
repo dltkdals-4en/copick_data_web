@@ -64,6 +64,14 @@ class FbHelper {
     });
   }
 
+  Future<void> updateVolumes1(PickTaskModel card, double volumes) async {
+    print('fb_update_volumes');
+    await _firestore
+        .collection('pick_record_anseong')
+        .doc(card.pickDocId)
+        .update({'pick_total_waste': volumes});
+  }
+
   Future<void> deleteTaskData() async {}
 
   //테스트용 태스크 정보

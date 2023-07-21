@@ -23,20 +23,18 @@ class DataInsertBtn extends StatelessWidget {
       height: 80,
       child: ElevatedButton(
         child: Text(enter.getBtnText(index)),
-        onPressed: () async {
-          if (index == enter.openIndex) {
-            await data
-                .updateVolumes(card, enter.volumes)
-                .then((value) {
-                  enter.saveVolumes(index);
-              enter.init();
-            });
+        onPressed: ()  {
+          if ( enter.openIndex == index) {
+            data.updateVolumes(card, enter.volumes);
+            enter.saveVolumes(index);
+
           } else if (index != enter.openIndex &&
               enter.taskListTeam[index].totalVolume != 0) {
           } else {
             if (enter.selectedTeam == "선택 안됨") {
               print('no choice');
             } else {
+              print('else');
               enter.changeOpenIndex(index);
             }
           }
@@ -61,6 +59,9 @@ class DataInsertBtn extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: KColors.lightPrimary,
           textStyle: kBtnTextStyle.copyWith(),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(SMALLGAP),
+          ),
         ),
       ),
     );

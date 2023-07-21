@@ -1,20 +1,16 @@
-import 'package:copick_data_web/pages/home/widgets/card_list_widget.dart';
-import 'package:copick_data_web/pages/home/widgets/home_card_widget.dart';
-import 'package:copick_data_web/pages/home/widgets/home_grid_card_widget.dart';
-import 'package:copick_data_web/pages/home/widgets/home_header_widget.dart';
+
+import 'package:copick_data_web/pages/enter_data_page/widgets/card_list_widget.dart';
+import 'package:copick_data_web/pages/enter_data_page/widgets/home_header_widget.dart';
 import 'package:copick_data_web/providers/enter_volumes_provider.dart';
 import 'package:copick_data_web/providers/get_data_provider.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../providers/fb_helper.dart';
-import '../../utilitys/colors.dart';
 import '../../utilitys/constants.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
+class EnterDataPage extends StatelessWidget {
+  const EnterDataPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,13 +20,14 @@ class HomePage extends StatelessWidget {
     enter.taskTotal = data.getTaskTeamList();
     enter.getTaskListWithTeam();
     var list = enter.taskListTeam;
+    print(enter.openIndex);
     return Scaffold(
       appBar: AppBar(
         title: Text('수거량 입력하기'),
       ),
       body: Column(
         children: [
-          HomeHeaderWidget(),
+          EnterDataHeaderWidget(),
           kBigH,
           Expanded(
             child: CardListWidget(list),

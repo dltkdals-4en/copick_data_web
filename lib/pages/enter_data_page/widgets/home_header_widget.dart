@@ -1,5 +1,4 @@
 import 'package:copick_data_web/providers/enter_volumes_provider.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -7,8 +6,8 @@ import '../../../providers/get_data_provider.dart';
 import '../../../utilitys/colors.dart';
 import '../../../utilitys/constants.dart';
 
-class HomeHeaderWidget extends StatelessWidget {
-  const HomeHeaderWidget({Key? key}) : super(key: key);
+class EnterDataHeaderWidget extends StatelessWidget {
+  const EnterDataHeaderWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -37,10 +36,17 @@ class HomeHeaderWidget extends StatelessWidget {
                         )
                       : Text.rich(
                           TextSpan(
-                            text: "오늘 ${enter.selectedTeam}의 수거량 입력할 장소는 ",
+                            text: "오늘 ",
                             style: kHeaderTextStyle.copyWith(
                                 fontWeight: FontWeight.w500),
                             children: [
+                              TextSpan(
+                                text: '${enter.selectedTeam}',
+                                style: kHeaderTextStyle.copyWith(
+                                    fontWeight: FontWeight.w700,
+                                    color: KColors.black),
+                              ),
+                              TextSpan(text: '의 수거량 입력할 장소는 '),
                               TextSpan(
                                 text: '${enter.taskListTeam.length}${"곳"}',
                                 style: kHeaderTextStyle.copyWith(
@@ -51,7 +57,7 @@ class HomeHeaderWidget extends StatelessWidget {
                             ],
                           ),
                           overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
+                          maxLines: 2,
                         ),
                 ), //일정 text
                 Text.rich(
