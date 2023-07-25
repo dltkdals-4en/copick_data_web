@@ -16,7 +16,7 @@ class CardListWidget extends StatelessWidget {
     if (list.isEmpty) {
       return Image.asset('assets/images/noData@3x.png');
     } else {
-      if (size.width < 1400) {
+      if (size.width < 1430) {
         return ListView.builder(
           itemCount: list.length,
           itemBuilder: (context, index) {
@@ -27,7 +27,7 @@ class CardListWidget extends StatelessWidget {
         return GridView.builder(
           gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
             maxCrossAxisExtent: size.width / 4,
-            childAspectRatio: 1.2,
+            childAspectRatio: 1.1,
           ),
           itemBuilder: (context, index) {
             return HomeGridCardWidget(index);

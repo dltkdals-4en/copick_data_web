@@ -1,5 +1,6 @@
 import 'package:copick_data_web/providers/enter_volumes_provider.dart';
 import 'package:copick_data_web/providers/get_data_provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -20,6 +21,7 @@ class HomeCardWidget extends StatelessWidget {
     var data = Provider.of<GetDataProvider>(context);
     var cardWidth = (size.width < 1600)?size.width - (NORMALGAP * 2):(size.width - (NORMALGAP * 2))/4;
     var card = enter.taskListTeam[index];
+    var date = DateFormat('a h시 mm분').format(DateFormat('yy/MM/dd hh:mm').parse(card.pickUpDate!));
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(NORMALGAP),
@@ -38,20 +40,20 @@ class HomeCardWidget extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          card.team!,
-                          style: kLabelTextStyle.copyWith(),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        enter.setLocName(card.locationName!,
-                            sub: KColors.darkGrey),
                         // Text(
-                        //   '수거 완료 시간 : $date',
-                        //   style: kLabelTextStyle,
+                        //   card.team!,
+                        //   style: kLabelTextStyle.copyWith(),
                         //   maxLines: 1,
                         //   overflow: TextOverflow.ellipsis,
                         // ),
+                        enter.setLocName(card.locationName!,
+                            sub: KColors.darkGrey),
+                        Text(
+                          '수거 완료 시간 : $date',
+                          style: kLabelTextStyle,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                         Text(
                           '수거량: ${enter.volumesText(card.totalVolume)}',
                           style: kLabelTextStyle,
@@ -134,17 +136,36 @@ class HomeCardWidget extends StatelessWidget {
                       kNorH,
                       ElevatedButton(
                         onPressed: () async {
-                          if (enter.volumes == '' ||
-                              enter.volumes == null ||
-                              enter.volumes == '0') {
-                            makeFToast(context, '수거량을 입력해주세요.');
-                          } else {
-                            // print(enter.volumes);
-                            // await data.updateVolumes(
-                            //     card, enter.volumes);
-                            // home.saveVolumes(card, enter.volumes);
-                            // enter.init();
+                          if ( enter.openIndex == index) {
+                            await data.updateVolumes(card, enter.volumes);
+                            enter.saveVolumes(index);
+                            enter.init();
+                          } else if (index != enter.openIndex &&
+                              enter.taskListTeam[index].totalVolume != 0) {
+                            //수거량 변경하기
+                          } else{
+                            if (enter.selectedTeam != "선택 안됨") {
+                              print('btn change');
+                              enter.changeOpenIndex(index);
+                            } else {
+                              print(size.width);
+                              print(size.height);
+                              // showDialog(
+                              //  context: context,
+                              //  builder: (context) => AlertDialog(
+                              //    contentPadding: EdgeInsets.all(NORMALGAP),
+                              //    content: Text(
+                              //      '수거 팀을 선택해주세요',
+                              //      style: kContentTextStyle.copyWith(),
+                              //    ),
+                              //
+                              //  ),
+                              //
+                              // );
+                            }
                           }
+
+
                         },
                         style: ElevatedButton.styleFrom(
                           fixedSize: Size(cardWidth, 70),

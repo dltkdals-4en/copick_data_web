@@ -20,7 +20,7 @@ class EnterDataPage extends StatelessWidget {
     enter.taskTotal = data.getTaskTeamList();
     enter.getTaskListWithTeam();
     var list = enter.taskListTeam;
-    print(enter.openIndex);
+    print('open Index = ${enter.openIndex}');
     return Scaffold(
       appBar: AppBar(
         title: Text('수거량 입력하기'),

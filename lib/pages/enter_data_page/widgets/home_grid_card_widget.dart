@@ -2,6 +2,7 @@ import 'package:copick_data_web/providers/enter_volumes_provider.dart';
 import 'package:copick_data_web/providers/get_data_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../../../utilitys/colors.dart';
@@ -22,6 +23,8 @@ class HomeGridCardWidget extends StatelessWidget {
         ? size.width - (NORMALGAP * 2)
         : (size.width - (NORMALGAP * 2)) / 4;
     var card = enter.taskListTeam[index];
+
+    var date = DateFormat('a h시 mm분').format(DateFormat('yy/MM/dd hh:mm').parse(card.pickUpDate!));
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(NORMALGAP),
@@ -33,6 +36,7 @@ class HomeGridCardWidget extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.max,
               children: [
                 Column(
                   mainAxisSize: MainAxisSize.min,
@@ -45,12 +49,12 @@ class HomeGridCardWidget extends StatelessWidget {
                     //   overflow: TextOverflow.ellipsis,
                     // ),
                     enter.setLocName(card.locationName!, sub: KColors.darkGrey),
-                    // Text(
-                    //   '수거 완료 시간 : $date',
-                    //   style: kLabelTextStyle,
-                    //   maxLines: 1,
-                    //   overflow: TextOverflow.ellipsis,
-                    // ),
+                    Text(
+                      '수거 시간 : $date',
+                      style: kLabelTextStyle,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ],
                 ),
                 (enter.openIndex == index)
@@ -121,25 +125,26 @@ class HomeGridCardWidget extends StatelessWidget {
                   ],
                 ),
                 kNorH,
-                (card.totalVolume == null || card.totalVolume == 0)
-                    ? DataInsertBtn(index)
-                    : ElevatedButton(
-                        onPressed: () {
-                          enter.changeOpenIndex(index);
-                          enter.changeVolumes(card.totalVolume.toString());
-                        },
-                        style: ElevatedButton.styleFrom(
-                          fixedSize: Size(cardWidth, 80),
-                          backgroundColor: KColors.lightPrimary,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(SMALLGAP),
-                          ),
-                        ),
-                        child: Text(
-                          '수거량 변경하기',
-                          style: kBtnTextStyle.copyWith(),
-                        ),
-                      ),
+                // (card.totalVolume == null || card.totalVolume == 0)
+                //     ?
+                DataInsertBtn(index)
+                    // : ElevatedButton(
+                    //     onPressed: () {
+                    //       enter.changeOpenIndex(index);
+                    //       enter.changeVolumes(card.totalVolume.toString());
+                    //     },
+                    //     style: ElevatedButton.styleFrom(
+                    //       fixedSize: Size(cardWidth, 80),
+                    //       backgroundColor: KColors.lightPrimary,
+                    //       shape: RoundedRectangleBorder(
+                    //         borderRadius: BorderRadius.circular(SMALLGAP),
+                    //       ),
+                    //     ),
+                    //     child: Text(
+                    //       '수거량 변경하기',
+                    //       style: kBtnTextStyle.copyWith(),
+                    //     ),
+                    //   ),
               ],
             )
 
