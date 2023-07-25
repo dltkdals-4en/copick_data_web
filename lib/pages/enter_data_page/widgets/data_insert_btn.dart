@@ -24,40 +24,69 @@ class DataInsertBtn extends StatelessWidget {
       child: ElevatedButton(
         child: Text(enter.getBtnText(index)),
         onPressed: () async {
-          if ( enter.openIndex == index) {
+          if (enter.openIndex == index) {
             await data.updateVolumes(card, enter.volumes);
             enter.saveVolumes(index);
             enter.init();
           } else if (index != enter.openIndex &&
               enter.taskListTeam[index].totalVolume != 0) {
-            print('수거량 변경');
-            //수거량 변경하기
-          } else{
+
+
             if (enter.selectedTeam != "선택 안됨") {
               print('btn change');
               enter.changeOpenIndex(index);
             } else {
-              print(size.width);
-              print(size.height);
-               // showDialog(
-               //  context: context,
-               //  builder: (context) => AlertDialog(
-               //    contentPadding: EdgeInsets.all(NORMALGAP),
-               //    content: Text(
-               //      '수거 팀을 선택해주세요',
-               //      style: kContentTextStyle.copyWith(),
-               //    ),
-               //
-               //  ),
-              //
-              // );
+              // print(size.width);
+              // print(size.height);
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  contentPadding: EdgeInsets.all(NORMALGAP),
+                  content: Text(
+                    '수거 팀을 선택해주세요',
+                    style: kContentTextStyle.copyWith(),
+                  ),
+                  actions: [
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text('확인'),
+                    ),
+                  ],
+                ),
+              );
+            }
+          } else {
+            if (enter.selectedTeam != "선택 안됨") {
+              print('btn change');
+              enter.changeOpenIndex(index);
+            } else {
+              // print(size.width);
+              // print(size.height);
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  contentPadding: EdgeInsets.all(NORMALGAP),
+                  content: Text(
+                    '수거 팀을 선택해주세요',
+                    style: kContentTextStyle.copyWith(),
+                  ),
+                  actions: [
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text('확인'),
+                    ),
+                  ],
+                ),
+              );
             }
           }
-
-
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: KColors.lightPrimary,
+          backgroundColor: enter.getBtnColor(index),
           textStyle: kBtnTextStyle.copyWith(),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(SMALLGAP),

@@ -31,7 +31,11 @@ class EnterVolumesProvider with ChangeNotifier {
     openIndex = index;
     notifyListeners();
   }
+  void initTeam(){
+    selectedTeam = '선택 안됨';
 
+    notifyListeners();
+  }
   void init() {
     print('init');
     volumes = '0';
@@ -126,5 +130,19 @@ class EnterVolumesProvider with ChangeNotifier {
     taskListTeam[index].totalVolume = double.parse(volumes);
 
     notifyListeners();
+  }
+
+  Color getBtnColor(int index) {
+    if (index == openIndex) {
+      return KColors.lightPrimary;
+    } else if (index != openIndex && taskListTeam[index].totalVolume != 0) {
+      return KColors.orange;
+    } else {
+      return KColors.lightPrimary;
+    }
+  }
+
+  int doneVolumesLength() {
+    return taskListTeam.where((element) => element.totalVolume != 0).length;
   }
 }

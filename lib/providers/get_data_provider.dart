@@ -133,7 +133,11 @@ class GetDataProvider with ChangeNotifier {
       });
     });
   }
-
+  init(){
+    hasTaskData =false;
+    hasLocData =false;
+    notifyListeners();
+  }
   Future<void> updateVolumes(PickTaskModel card, String volumes) async {
     var totalVolumes = double.parse(volumes);
 

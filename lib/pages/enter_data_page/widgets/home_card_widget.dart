@@ -83,14 +83,14 @@ class HomeCardWidget extends StatelessWidget {
                               },
                               style: ElevatedButton.styleFrom(
                                   fixedSize: Size(cardWidth / 3, 80),
-                                  backgroundColor: KColors.lightPrimary,
+                                  backgroundColor: KColors.orange,
                                   shape: RoundedRectangleBorder(
                                       borderRadius:
                                           BorderRadius.circular(SMALLGAP))),
                               child: Text(
                                 '수거량 변경',
                                 style: kBtnTextStyle.copyWith(
-                                  fontSize: 22,
+
                                   color: KColors.white,
                                 ),
                               ),

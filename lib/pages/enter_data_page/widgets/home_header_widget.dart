@@ -2,6 +2,7 @@ import 'package:copick_data_web/providers/enter_volumes_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../providers/fb_helper.dart';
 import '../../../providers/get_data_provider.dart';
 import '../../../utilitys/colors.dart';
 import '../../../utilitys/constants.dart';
@@ -97,27 +98,29 @@ class EnterDataHeaderWidget extends StatelessWidget {
                 ),
               ],
             ),
-            // (home.doneVolumesLength() == home.volumesList.length)
-            //     ? Column(
-            //   children: [
-            //     kSmH,
-            //     ElevatedButton(
-            //         onPressed: () async {
-            //           await FbHelper()
-            //               .endVolumes(home.seletedTeam)
-            //               .then((value) => Navigator.pop(context));
-            //         },
-            //         style: ElevatedButton.styleFrom(
-            //             fixedSize: Size(size.width / 3, 50),
-            //             backgroundColor: KColors.lightPrimary,
-            //             shape: RoundedRectangleBorder(
-            //                 borderRadius:
-            //                 BorderRadius.circular(SMALLGAP))),
-            //         child: Text('수거량 입력 완료')),
-            //   ],
-            // )
-            //     : SizedBox()
-            // kSmH,
+            (enter.taskListTeam.isNotEmpty &&
+                    enter.doneVolumesLength() == enter.taskListTeam.length)
+                ? Column(
+                    children: [
+                      kSmH,
+                      ElevatedButton(
+                          onPressed: () async {
+                            await FbHelper().endVolumes(enter.selectedTeam).then((value) {
+                              data.init();
+                              enter.initTeam();
+                            });
+                          },
+                          style: ElevatedButton.styleFrom(
+                              fixedSize: Size(size.width / 2, 50),
+                              textStyle: kBtnTextStyle,
+                              backgroundColor: KColors.lightPrimary,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadius.circular(SMALLGAP))),
+                          child: Text('수거량 입력 완료')),
+                    ],
+                  )
+                : SizedBox(),
           ],
         ),
       ),

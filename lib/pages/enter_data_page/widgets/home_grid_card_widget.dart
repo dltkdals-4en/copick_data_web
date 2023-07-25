@@ -49,7 +49,7 @@ class HomeGridCardWidget extends StatelessWidget {
                     //   overflow: TextOverflow.ellipsis,
                     // ),
                     enter.setLocName(card.locationName!, sub: KColors.darkGrey),
-                    Text(
+                    (enter.openIndex == index)?SizedBox():Text(
                       '수거 시간 : $date',
                       style: kLabelTextStyle,
                       maxLines: 1,
