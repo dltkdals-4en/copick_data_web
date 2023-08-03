@@ -9,8 +9,8 @@ import '../../../utilitys/colors.dart';
 import '../../../utilitys/constants.dart';
 import 'data_insert_btn.dart';
 
-class HomeCardWidget extends StatelessWidget {
-  const HomeCardWidget(this.index, {Key? key}) : super(key: key);
+class EnterCardWidget extends StatelessWidget {
+  const EnterCardWidget(this.index, {Key? key}) : super(key: key);
 
   final int index;
 
@@ -113,6 +113,37 @@ class HomeCardWidget extends StatelessWidget {
                               inputFormatters: <TextInputFormatter>[
                                 FilteringTextInputFormatter.allow(RegExp(r'^[0-9]+.?[0-9]*'))
                               ],
+                              textInputAction: TextInputAction.go,
+                              onSubmitted: (value) async {
+                                if ( enter.openIndex == index) {
+                                  await data.updateVolumes(card, enter.volumes);
+                                  enter.saveVolumes(index);
+                                  enter.init();
+                                } else if (index != enter.openIndex &&
+                                    enter.taskListTeam[index].totalVolume != 0) {
+                                  //수거량 변경하기
+                                } else{
+                                  if (enter.selectedTeam != "선택 안됨") {
+                                    print('btn change');
+                                    enter.changeOpenIndex(index);
+                                  } else {
+                                    print(size.width);
+                                    print(size.height);
+                                    // showDialog(
+                                    //  context: context,
+                                    //  builder: (context) => AlertDialog(
+                                    //    contentPadding: EdgeInsets.all(NORMALGAP),
+                                    //    content: Text(
+                                    //      '수거 팀을 선택해주세요',
+                                    //      style: kContentTextStyle.copyWith(),
+                                    //    ),
+                                    //
+                                    //  ),
+                                    //
+                                    // );
+                                  }
+                                }
+                              },
                               decoration: InputDecoration(
                                 hintText: enter.volumes,
                                 fillColor: KColors.whiteGrey,

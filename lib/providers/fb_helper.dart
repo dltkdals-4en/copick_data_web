@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 
+import '../debug.dart';
 import '../models/card_data_model.dart';
 import '../models/pick_task_model.dart';
 
@@ -14,6 +15,10 @@ class FbHelper {
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   User? user = FirebaseAuth.instance.currentUser;
+  String debugRecord = 'task_record_dummy';
+  String debugTask = 'task_data_dummy';
+  String releaseRecord = 'pick_record_anseong';
+  String releaseTask = 'pick_task_anseong';
 
   //카페 정보
   Future<QuerySnapshot<Map<String, dynamic>>> getLocData() async {
@@ -32,7 +37,7 @@ class FbHelper {
     var todayZero = DateFormat('yy-MM-dd').format(today).toString();
     var date = DateFormat('yy-MM-dd hh:mm:ss').parse('$todayZero 00:00:00');
     return await _firestore
-        .collection('pick_record_anseong')
+        .collection((isDebug)?debugRecord:releaseRecord)
         .where('pick_up_date', isGreaterThan: date)
         .get();
   }
@@ -49,68 +54,34 @@ class FbHelper {
   Future<void> updateTaskConditionData(
       CardDataModel card, int condition) async {
     await _firestore
-        .collection('pick_task_anseong')
+        .collection((isDebug)?debugTask:releaseTask)
         .doc(card.pickDocId!)
         .update({'condition': condition});
   }
 
+
   Future<void> updateVolumes(PickTaskModel card, double volumes) async {
     print('fb_update_volumes');
-    await _firestore.collection('volume_record_anseong').add({
-      'location_id': card.locationId,
-      'volumes': volumes,
-      'location_name': card.locationName,
-      'complete_time': DateTime.now()
-    });
-  }
-
-  Future<void> updateVolumes1(PickTaskModel card, double volumes) async {
-    print('fb_update_volumes');
     await _firestore
-        .collection('pick_record_anseong')
+        .collection((isDebug)?debugRecord:releaseRecord)
         .doc(card.pickDocId)
         .update({'pick_total_waste': volumes});
   }
 
   Future<void> deleteTaskData() async {}
 
-  //테스트용 태스크 정보
-  Future<QuerySnapshot<Map<String, dynamic>>> getTaskDummyData() async {
-    var today = DateTime.now().weekday;
 
-    return await _firestore
-        .collection('pick_task_anseong')
-        .where('track', isEqualTo: today)
-        .get();
-  }
 
-  //테스트용 태스크 모두 넣기
-  Future<void> insertAllTaskDummyData(List<PickTaskModel> list) async {
-    list.forEach((element) async {
-      await _firestore.collection('pick_task_anseong').add(element.toMap());
-    });
-  }
+  // //테스트용 태스크 모두 넣기
+  // Future<void> insertAllTaskDummyData(List<PickTaskModel> list) async {
+  //   list.forEach((element) async {
+  //     await _firestore.collection('pick_task_anseong').add(element.toMap());
+  //   });
+  // }
 
-  //수거 기록
+
+
   Future<void> insertRecordData(
-      String title, int condition, int track, String team) async {
-    var teamNum = 99;
-    if (team.startsWith("수거")) {
-      teamNum = int.parse(team.substring(3, team.length - 1));
-    } else {
-      teamNum = 0;
-    }
-    await _firestore.collection('pick_record_anseong').add({
-      'condition': condition,
-      'location_id': title,
-      'pick_up_date': DateTime.now(),
-      'track': track,
-      'team': teamNum,
-      'user_code': '000',
-    });
-  }
-
-  Future<void> insertRecordDataAnseong(
       String title, int condition, int track, String team) async {
     if (team.startsWith("수거")) {
       team = team.substring(3, team.length - 1);
@@ -118,7 +89,7 @@ class FbHelper {
       team = '전체';
     }
 
-    await _firestore.collection('pick_record_anseong').add({
+    await _firestore.collection((isDebug)?debugRecord:releaseRecord).add({
       'condition': condition,
       'location_id': title,
       'pick_up_date': DateTime.now(),
@@ -146,5 +117,18 @@ class FbHelper {
     await _firestore
         .collection('end_volumes')
         .add({'seletedTeam': seletedTeam, 'complete_time': DateTime.now()});
+  }
+
+  Future<QuerySnapshot<Map<String, dynamic>>> getLocVersion() async{
+    return await _firestore.collection('anseong_local_version').get();
+ }
+
+  Future<bool> tryLogin(String id, String pw) async {
+   var i = await _firestore.collection('admin_account').get();
+   if(i.docs[0].data()['pw'] ==pw){
+     return true;
+   }else{
+     return false;
+   }
   }
 }

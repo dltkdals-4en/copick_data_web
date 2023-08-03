@@ -3,6 +3,7 @@ import 'package:easy_localization/easy_localization.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:sqflite/sqflite.dart';
 
@@ -32,11 +33,24 @@ class GetDataProvider with ChangeNotifier {
   bool hasLocData = false;
   bool hasTaskData = false;
 
+  // Future<void> locVersionCheck() async {
+  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   String? serverVersion;
+  //   await FbHelper().getLocVersion().then((value) {
+  //     serverVersion = value.docs[0].data()['num'];
+  //   }).then((value) async {
+  //     var localVersion = await prefs.getString('locVersion');
+  //     if (localVersion == null || localVersion != serverVersion) {
+  //       await prefs.setString('locVersion', serverVersion!);
+  //       getLocList();
+  //     }
+  //   });
+  // }
+
   Future<void> getLocList() async {
     if (hasLocData == false) {
       print('getLoc()');
-      QuerySnapshot<Map<String, dynamic>> data =
-          await _firestore.collection('waste_location_anseong').get();
+      QuerySnapshot<Map<String, dynamic>> data = await FbHelper().getLocData();
       locList.clear();
       for (var element in data.docs) {
         locList.add(WasteLocationModel.fromJson(element.data(), element.id));
@@ -47,16 +61,9 @@ class GetDataProvider with ChangeNotifier {
   }
 
   Future<void> getTaskList() async {
-    var today = DateTime.now();
-    var todayZero = DateFormat('yy-MM-dd').format(today).toString();
-    var date = DateFormat('yy-MM-dd hh:mm:ss').parse('$todayZero 00:00:00');
-
     if (hasTaskData == false) {
       print('getTask()');
-      QuerySnapshot<Map<String, dynamic>> data = await _firestore
-          .collection('pick_record_anseong')
-          .where('pick_up_date', isGreaterThan: date)
-          .get();
+      QuerySnapshot<Map<String, dynamic>> data = await FbHelper().getTaskData();
       taskList.clear();
       for (var element in data.docs) {
         taskList.add(PickTaskModel.fromJson(element.data(), element.id));
@@ -65,52 +72,6 @@ class GetDataProvider with ChangeNotifier {
       hasTaskData = true;
       notifyListeners();
     }
-  }
-
-  Future<void> fbUpdateAllCondition() async {
-    await _firestore.collection('pick_task_anseong').get().then((data) {
-      data.docs.forEach((element) async {
-        await _firestore
-            .collection('pick_task_anseong')
-            .doc(element.id)
-            .update({'condition': 0});
-      });
-    });
-  }
-
-  Future<void> fbUpdatePickRecord(
-      String title, int condition, int track, String team) async {
-    var teamNum = '전체';
-    if (team.startsWith("수거")) {
-      teamNum = team.substring(3, team.length - 1);
-    } else {
-      teamNum = '전체';
-    }
-    await _firestore.collection('pick_record_anseong').add({
-      'condition': condition,
-      'location_id': title,
-      'pick_up_date': DateTime.now(),
-      'track': track,
-      'team': teamNum,
-      'user_code': '000',
-    });
-  }
-
-  Future<void> initAllCondition() async {
-    final db = await DbHelper().database;
-    await fbUpdateAllCondition().then((value) async {
-      await db!.rawQuery('delete from waste_location').then((value) async {
-        await db.rawQuery('delete from pick_task').then((value) async {
-          await db.rawQuery('delete from gathering_place').then((value) {
-            haveWasteLocationData = false;
-            havePickTaskData = false;
-            haveCardData = false;
-            haveGatheringData = false;
-            notifyListeners();
-          });
-        });
-      });
-    });
   }
 
   Future<void> updateCondition(
@@ -125,41 +86,26 @@ class GetDataProvider with ChangeNotifier {
           .updateTaskConditionData(card, condition)
           .then((value) async {
         await FbHelper()
-            .insertRecordDataAnseong(
-                card.locationId!, condition, card.track!, team)
+            .insertRecordData(card.locationId!, condition, card.track!, team)
             .then((value) {
           notifyListeners();
         });
       });
     });
   }
-  init(){
-    hasTaskData =false;
-    hasLocData =false;
+
+  init() {
+    hasTaskData = false;
+    hasLocData = false;
     notifyListeners();
   }
+
   Future<void> updateVolumes(PickTaskModel card, String volumes) async {
     var totalVolumes = double.parse(volumes);
 
-    await FbHelper().updateVolumes1(card, totalVolumes).then((value) async {
+    await FbHelper().updateVolumes(card, totalVolumes).then((value) async {
       notifyListeners();
     });
-  }
-
-  Future<void> fbLogout() async {
-    await FirebaseAuth.instance.signOut();
-    haveWasteLocationData = false;
-    havePickTaskData = false;
-    haveCardData = false;
-    notifyListeners();
-  }
-
-  Future<void> updateRecord() async {
-    final db = await _database;
-  }
-
-  Future<void> volumeEnd() async {
-    //await FbHelper().endVolumes();
   }
 
   Future<void> deleteDB() async {

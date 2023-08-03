@@ -9,8 +9,8 @@ import '../../../utilitys/colors.dart';
 import '../../../utilitys/constants.dart';
 import 'data_insert_btn.dart';
 
-class HomeGridCardWidget extends StatelessWidget {
-  const HomeGridCardWidget(this.index, {Key? key}) : super(key: key);
+class EnterGridCardWidget extends StatelessWidget {
+  const EnterGridCardWidget(this.index, {Key? key}) : super(key: key);
 
   final int index;
 

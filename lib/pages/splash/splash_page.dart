@@ -12,7 +12,6 @@ class SplashPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var data = Provider.of<GetDataProvider>(context);
-    var enter = Provider.of<EnterVolumesProvider>(context);
     if (data.hasLocData == false) {
       data.getLocList();
       return LoadingScreen();

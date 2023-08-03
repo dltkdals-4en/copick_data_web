@@ -2,8 +2,8 @@ import 'package:copick_data_web/models/pick_task_model.dart';
 import 'package:copick_data_web/utilitys/constants.dart';
 import 'package:flutter/material.dart';
 
-import 'home_card_widget.dart';
-import 'home_grid_card_widget.dart';
+import 'enter_card_widget.dart';
+import 'enter_grid_card_widget.dart';
 
 class CardListWidget extends StatelessWidget {
   const CardListWidget(this.list, {Key? key}) : super(key: key);
@@ -20,7 +20,7 @@ class CardListWidget extends StatelessWidget {
         return ListView.builder(
           itemCount: list.length,
           itemBuilder: (context, index) {
-            return HomeCardWidget(index);
+            return EnterCardWidget(index);
           },
         );
       } else if (size.width < 1800) {
@@ -30,7 +30,7 @@ class CardListWidget extends StatelessWidget {
             childAspectRatio: 1.1,
           ),
           itemBuilder: (context, index) {
-            return HomeGridCardWidget(index);
+            return EnterGridCardWidget(index);
           },
           itemCount: list.length,
         );
@@ -41,7 +41,7 @@ class CardListWidget extends StatelessWidget {
             childAspectRatio: 1.4,
           ),
           itemBuilder: (context, index) {
-            return HomeGridCardWidget(index);
+            return EnterGridCardWidget(index);
           },
           itemCount: list.length,
         );

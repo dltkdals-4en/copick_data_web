@@ -5,6 +5,7 @@ class Routes {
   static const String root = '/root';
   static const String tab = '/tab';
   static const String location ='/location';
+  static const String admin = '/admin';
 
 // static const String preparePrefs = '/prepare_prefs';
 }

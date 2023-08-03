@@ -1,5 +1,7 @@
+import 'package:copick_data_web/providers/admin_provider.dart';
 import 'package:copick_data_web/providers/enter_volumes_provider.dart';
 import 'package:copick_data_web/providers/get_data_provider.dart';
+import 'package:copick_data_web/providers/login_provider.dart';
 import 'package:copick_data_web/routes/route_generator.dart';
 import 'package:copick_data_web/routes/routes.dart';
 import 'package:copick_data_web/utilitys/colors.dart';
@@ -32,6 +34,12 @@ Future<void> main() async {
         ChangeNotifierProvider<EnterVolumesProvider>(
           create: (_) => EnterVolumesProvider(),
         ),
+        ChangeNotifierProvider<LoginProvider>(
+          create: (_) => LoginProvider(),
+        ),
+        ChangeNotifierProvider<AdminProvider>(
+          create: (_) => AdminProvider(),
+        ),
       ],
       child: EasyLocalization(
         path: 'assets/language',
@@ -57,7 +65,7 @@ class MyApp extends StatelessWidget {
       // Remove the debug banner
       debugShowCheckedModeBanner: false,
       title: '수거량 입력 페이지',
-      initialRoute: Routes.splash,
+      initialRoute: Routes.admin,
       onGenerateRoute: RouteGenerator.generateRoute,
       theme: ThemeData(
         scaffoldBackgroundColor: KColors.backgroundGrey,
@@ -86,4 +94,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
