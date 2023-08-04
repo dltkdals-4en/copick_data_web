@@ -1,5 +1,8 @@
 
 import 'package:copick_data_web/pages/admin/admin_page.dart';
+import 'package:copick_data_web/pages/location_manage/location_manage_page.dart';
+import 'package:copick_data_web/pages/record_manage/record_manage_page.dart';
+import 'package:copick_data_web/pages/schedule_manage/schedule_manage_page.dart';
 import 'package:copick_data_web/routes/routes.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -31,6 +34,18 @@ class RouteGenerator {
       case Routes.admin:
         return MaterialPageRoute(
           builder: (context) => AdminPage(),
+        );
+      case Routes.location:
+        return MaterialPageRoute(
+          builder: (context) => LocationManagePage(),
+        );
+      case Routes.schedule:
+        return MaterialPageRoute(
+          builder: (context) => ScheduleManagePage(),
+        );
+      case Routes.record:
+        return MaterialPageRoute(
+          builder: (context) =>RecordManagePage(),
         );
       // case Routes.location:
       //   return MaterialPageRoute(
