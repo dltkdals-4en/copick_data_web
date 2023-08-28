@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../models/pick_task_model.dart';
+import '../models/pick_record_model.dart';
 import '../utilitys/colors.dart';
 import '../utilitys/constants.dart';
 
@@ -8,9 +8,9 @@ class EnterVolumesProvider with ChangeNotifier {
   String volumes = '0';
   int openIndex = -1;
   String selectedTeam = '선택 안됨';
-  List<String> teamList = ["선택 안됨", "수거 A팀", "수거 B팀", "수거 C팀"];
-  List<PickTaskModel> taskTotal = [];
-  List<PickTaskModel> taskListTeam = [];
+  List<String> teamList = ["선택 안됨", "수거 A팀", "수거 B팀", "수거 C팀", "추가 요청"];
+  List<PickRecordModel> taskTotal = [];
+  List<PickRecordModel> taskListTeam = [];
 
   String formatDate(String date) {
     return '';
@@ -31,11 +31,13 @@ class EnterVolumesProvider with ChangeNotifier {
     openIndex = index;
     notifyListeners();
   }
-  void initTeam(){
+
+  void initTeam() {
     selectedTeam = '선택 안됨';
 
     notifyListeners();
   }
+
   void init() {
     print('init');
     volumes = '0';
@@ -45,7 +47,7 @@ class EnterVolumesProvider with ChangeNotifier {
   }
 
   String volumesText(double? totalVolume) {
-    if (totalVolume == 0 || totalVolume == null) {
+    if (totalVolume == null) {
       return '입력 안됨';
     } else {
       return '${totalVolume.toStringAsFixed(2)}Kg';
@@ -92,10 +94,29 @@ class EnterVolumesProvider with ChangeNotifier {
   }
 
   void getTaskListWithTeam() {
+    int? teamNum;
+    switch (selectedTeam) {
+      case "수거 A팀":
+        teamNum = 10;
+        break;
+      case "수거 B팀":
+        teamNum = 20;
+        break;
+      case "수거 C팀":
+        teamNum = 30;
+        break;
+      case "추가 요청":
+        teamNum = 40;
+        break;
+      default:
+        teamNum = 0;
+        break;
+    }
     if (selectedTeam.startsWith("수거")) {
-      var teamNum = selectedTeam.substring(3, selectedTeam.length - 1);
       taskListTeam =
           taskTotal.where((element) => element.team == teamNum).toList();
+    } else if (selectedTeam == "추가 요청") {
+      taskListTeam = taskTotal.where((element) => element.team == 40).toList();
     } else {
       taskListTeam = taskTotal;
     }
@@ -107,7 +128,7 @@ class EnterVolumesProvider with ChangeNotifier {
   String getBtnText(int index) {
     if (index == openIndex) {
       return '수거량 저장하기';
-    } else if (index != openIndex && taskListTeam[index].totalVolume != 0) {
+    } else if (index != openIndex && taskListTeam[index].totalVolume != null) {
       return '수거량 변경하기';
     } else {
       return '수거량 입력하기';
@@ -135,7 +156,7 @@ class EnterVolumesProvider with ChangeNotifier {
   Color getBtnColor(int index) {
     if (index == openIndex) {
       return KColors.lightPrimary;
-    } else if (index != openIndex && taskListTeam[index].totalVolume != 0) {
+    } else if (index != openIndex && taskListTeam[index].totalVolume != null) {
       return KColors.orange;
     } else {
       return KColors.lightPrimary;

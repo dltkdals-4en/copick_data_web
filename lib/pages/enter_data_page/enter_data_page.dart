@@ -22,7 +22,7 @@ class EnterDataPage extends StatelessWidget {
     var size = MediaQuery.of(context).size;
     var enter = Provider.of<EnterVolumesProvider>(context);
     var login = Provider.of<LoginProvider>(context);
-    enter.taskTotal = data.getTaskTeamList();
+    enter.taskTotal = data.recordList;
     enter.getTaskListWithTeam();
     var list = enter.taskListTeam;
 

@@ -1,4 +1,4 @@
-import 'package:copick_data_web/models/pick_task_model.dart';
+import 'package:copick_data_web/models/pick_record_model.dart';
 import 'package:copick_data_web/utilitys/constants.dart';
 import 'package:flutter/material.dart';
 
@@ -8,7 +8,7 @@ import 'enter_grid_card_widget.dart';
 class CardListWidget extends StatelessWidget {
   const CardListWidget(this.list, {Key? key}) : super(key: key);
 
-  final List<PickTaskModel> list;
+  final List<PickRecordModel> list;
 
   @override
   Widget build(BuildContext context) {

@@ -29,7 +29,7 @@ class DataInsertBtn extends StatelessWidget {
             enter.saveVolumes(index);
             enter.init();
           } else if (index != enter.openIndex &&
-              enter.taskListTeam[index].totalVolume != 0) {
+              enter.taskListTeam[index].totalVolume ==null) {
 
 
             if (enter.selectedTeam != "선택 안됨") {

@@ -20,6 +20,7 @@ class AdminPage extends StatelessWidget {
     var size = MediaQuery.of(context).size;
     var admin = Provider.of<AdminProvider>(context);
     var data = Provider.of<GetDataProvider>(context);
+    admin.setLocList(data.locList);
     return Scaffold(
       body: Row(
         children: [
@@ -64,7 +65,7 @@ class AdminPage extends StatelessWidget {
                 displayMode: SideMenuDisplayMode.auto,
                 decoration: BoxDecoration(),
                 openSideMenuWidth: 200,
-                compactSideMenuWidth: 40,
+                compactSideMenuWidth: 46,
                 hoverColor: KColors.lightPrimary.withOpacity(0.5),
                 selectedColor: KColors.lightPrimary,
                 selectedIconColor: Colors.white,
@@ -82,16 +83,22 @@ class AdminPage extends StatelessWidget {
                 itemOuterPadding: const EdgeInsets.symmetric(horizontal: 5.0),
                 toggleColor: Colors.black54),
           ),
-          Expanded(
-              child: PageView(
-            controller: admin.pageController,
-            children: [
-              AdminHomePage(),
-              LocationManagePage(),
-              ScheduleManagePage(),
-              RecordManagePage(),
-            ],
-          )),
+          Container(
+            decoration: BoxDecoration(),
+            width: size.width / 2,
+            constraints: BoxConstraints(
+              minWidth: 380,
+            ),
+            child: PageView(
+              controller: admin.pageController,
+              children: [
+                AdminHomePage(),
+                LocationManagePage(),
+                ScheduleManagePage(),
+                RecordManagePage(),
+              ],
+            ),
+          ),
         ],
       ),
     );

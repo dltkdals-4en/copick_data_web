@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:copick_data_web/models/pick_task_model.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -9,7 +10,7 @@ import 'package:sqflite/sqflite.dart';
 
 import '../models/card_data_model.dart';
 import '../models/gathering_place_model.dart';
-import '../models/pick_task_model.dart';
+import '../models/pick_record_model.dart';
 import '../models/waste_location_model.dart';
 import 'db_helper.dart';
 import 'fb_helper.dart';
@@ -24,14 +25,16 @@ class GetDataProvider with ChangeNotifier {
   Database? _database;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   User? user = FirebaseAuth.instance.currentUser;
-  List<PickTaskModel> pickTaskList = [];
+  List<PickRecordModel> pickTaskList = [];
   List<WasteLocationModel> wasteLocationList = [];
   List<CardDataModel> cardDataList = [];
   List<GatheringPlaceModel> gatheringList = [];
   List<WasteLocationModel> locList = [];
+  List<PickRecordModel> recordList = [];
   List<PickTaskModel> taskList = [];
   bool hasLocData = false;
-  bool hasTaskData = false;
+  bool hasRecordData = false;
+  bool hasTaskData =false;
 
   // Future<void> locVersionCheck() async {
   //   final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -60,13 +63,27 @@ class GetDataProvider with ChangeNotifier {
     }
   }
 
+  Future<void> getRecordList() async {
+    if (hasRecordData == false) {
+      print('getRecord');
+      QuerySnapshot<Map<String, dynamic>> data = await FbHelper().getRecordData();
+      recordList.clear();
+      for (var element in data.docs) {
+        recordList.add(PickRecordModel.fromJson(element.data(), element.id));
+      }
+      print(recordList.length);
+      hasRecordData = true;
+      notifyListeners();
+    }
+  }
   Future<void> getTaskList() async {
     if (hasTaskData == false) {
-      print('getTask()');
-      QuerySnapshot<Map<String, dynamic>> data = await FbHelper().getTaskData();
+      print('getTask');
+      QuerySnapshot<Map<String, dynamic>> data = await FbHelper().getTaskData(null);
       taskList.clear();
       for (var element in data.docs) {
-        taskList.add(PickTaskModel.fromJson(element.data(), element.id));
+        var locationName = locList.firstWhere((e) => e.locationId == element.data()['location_id']).locationName;
+        taskList.add(PickTaskModel.fromJson(element.data(), element.id, locationName));
       }
       print(taskList.length);
       hasTaskData = true;
@@ -74,33 +91,15 @@ class GetDataProvider with ChangeNotifier {
     }
   }
 
-  Future<void> updateCondition(
-      CardDataModel card, String? conditionRadioValue, String team) async {
-    var condition = int.parse(conditionRadioValue!);
-    final db = await DbHelper().database;
-    await db!
-        .rawQuery(
-            "update pick_task set condition = $condition , pick_up_date = '${card.pickUpDate}' where pick_doc_id = '${card.pickDocId}'")
-        .then((value) async {
-      await FbHelper()
-          .updateTaskConditionData(card, condition)
-          .then((value) async {
-        await FbHelper()
-            .insertRecordData(card.locationId!, condition, card.track!, team)
-            .then((value) {
-          notifyListeners();
-        });
-      });
-    });
-  }
+
 
   init() {
-    hasTaskData = false;
+    hasRecordData = false;
     hasLocData = false;
     notifyListeners();
   }
 
-  Future<void> updateVolumes(PickTaskModel card, String volumes) async {
+  Future<void> updateVolumes(PickRecordModel card, String volumes) async {
     var totalVolumes = double.parse(volumes);
 
     await FbHelper().updateVolumes(card, totalVolumes).then((value) async {
@@ -117,7 +116,7 @@ class GetDataProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  List<PickTaskModel> getTaskTeamList() {
-    return taskList.where((element) => element.condition == 1).toList();
+  List<PickRecordModel> getTaskTeamList() {
+    return recordList.where((element) => element.condition == 1).toList();
   }
 }

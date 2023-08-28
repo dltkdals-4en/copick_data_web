@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 
 import '../debug.dart';
 import '../models/card_data_model.dart';
-import '../models/pick_task_model.dart';
+import '../models/pick_record_model.dart';
 
 class FbHelper {
   FbHelper._();
@@ -29,15 +29,59 @@ class FbHelper {
 
   Future<void> updateLocData() async {}
 
-  Future<void> deleteLocData() async {}
+  Future<void> deleteLocData(String docId, String locationId) async {
+    await _firestore.collection('waste_location_anseong').doc('').delete();
+    await _firestore
+        .collection('pick_task_anseong')
+        .where('location_id', isEqualTo: locationId)
+        .get()
+        .then((value) {
+      value.docs.forEach((element) async {
+        await _firestore
+            .collection('pick_task_anseong')
+            .doc(element.id)
+            .delete();
+      });
+    });
+    await _firestore
+        .collection('pick_record_anseong')
+        .where('location_id', isEqualTo: locationId)
+        .get()
+        .then((value) {
+      value.docs.forEach((element) async {
+        await _firestore
+            .collection('pick_record_anseong')
+            .doc(element.id)
+            .delete();
+      });
+    });
+  }
 
   //태스크 정보
-  Future<QuerySnapshot<Map<String, dynamic>>> getTaskData() async {
+  Future<QuerySnapshot<Map<String, dynamic>>> getRecordData() async {
     var today = DateTime.now();
     var todayZero = DateFormat('yy-MM-dd').format(today).toString();
     var date = DateFormat('yy-MM-dd hh:mm:ss').parse('$todayZero 00:00:00');
+    print(date);
     return await _firestore
-        .collection((isDebug)?debugRecord:releaseRecord)
+        .collection((isDebug) ? debugRecord : releaseRecord)
+        .where('pick_up_date', isGreaterThan: date)
+        .get();
+  }
+
+  Future<QuerySnapshot<Map<String, dynamic>>> getTaskData(
+      DateTime? dateTime) async {
+    DateTime? today;
+    if (dateTime == null) {
+      today = DateTime.now();
+    } else {
+      today = dateTime;
+    }
+
+    var todayZero = DateFormat('yy-MM-dd').format(today).toString();
+    var date = DateFormat('yy-MM-dd hh:mm:ss').parse('$todayZero 00:00:00');
+    return await _firestore
+        .collection((isDebug) ? debugTask : releaseTask)
         .where('pick_up_date', isGreaterThan: date)
         .get();
   }
@@ -49,28 +93,25 @@ class FbHelper {
         .get();
   }
 
-  Future<void> insertTaskData(List<PickTaskModel> list) async {}
+  Future<void> insertTaskData(List<PickRecordModel> list) async {}
 
   Future<void> updateTaskConditionData(
       CardDataModel card, int condition) async {
     await _firestore
-        .collection((isDebug)?debugTask:releaseTask)
+        .collection((isDebug) ? debugTask : releaseTask)
         .doc(card.pickDocId!)
         .update({'condition': condition});
   }
 
-
-  Future<void> updateVolumes(PickTaskModel card, double volumes) async {
+  Future<void> updateVolumes(PickRecordModel card, double volumes) async {
     print('fb_update_volumes');
     await _firestore
-        .collection((isDebug)?debugRecord:releaseRecord)
-        .doc(card.pickDocId)
+        .collection((isDebug) ? debugRecord : releaseRecord)
+        .doc(card.recordDocId)
         .update({'pick_total_waste': volumes});
   }
 
   Future<void> deleteTaskData() async {}
-
-
 
   // //테스트용 태스크 모두 넣기
   // Future<void> insertAllTaskDummyData(List<PickTaskModel> list) async {
@@ -78,8 +119,6 @@ class FbHelper {
   //     await _firestore.collection('pick_task_anseong').add(element.toMap());
   //   });
   // }
-
-
 
   Future<void> insertRecordData(
       String title, int condition, int track, String team) async {
@@ -89,7 +128,7 @@ class FbHelper {
       team = '전체';
     }
 
-    await _firestore.collection((isDebug)?debugRecord:releaseRecord).add({
+    await _firestore.collection((isDebug) ? debugRecord : releaseRecord).add({
       'condition': condition,
       'location_id': title,
       'pick_up_date': DateTime.now(),
@@ -113,22 +152,40 @@ class FbHelper {
     await FirebaseAuth.instance.signOut();
   }
 
-  Future<void> endVolumes(String seletedTeam) async {
+  Future<void> endVolumes(String selectedTeam) async {
+    int? teamNum;
+    switch (selectedTeam) {
+      case "수거 A팀":
+        teamNum = 10;
+        break;
+      case "수거 B팀":
+        teamNum = 20;
+        break;
+      case "수거 C팀":
+        teamNum = 30;
+        break;
+      case "추가 요청":
+        teamNum = 40;
+        break;
+      default:
+        teamNum = 0;
+        break;
+    }
     await _firestore
         .collection('end_volumes')
-        .add({'seletedTeam': seletedTeam, 'complete_time': DateTime.now()});
+        .add({'seletedTeam': teamNum, 'complete_time': DateTime.now()});
   }
 
-  Future<QuerySnapshot<Map<String, dynamic>>> getLocVersion() async{
+  Future<QuerySnapshot<Map<String, dynamic>>> getLocVersion() async {
     return await _firestore.collection('anseong_local_version').get();
- }
+  }
 
   Future<bool> tryLogin(String id, String pw) async {
-   var i = await _firestore.collection('admin_account').get();
-   if(i.docs[0].data()['pw'] ==pw){
-     return true;
-   }else{
-     return false;
-   }
+    var i = await _firestore.collection('admin_account').get();
+    if (i.docs[0].data()['pw'] == pw) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }

@@ -1,14 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:easy_localization/easy_localization.dart';
+import 'package:intl/intl.dart';
 
-class PickTaskModel{
-  String? taskDocId;
+class PickRecordModel {
+  String? recordDocId;
   int? pickOrder;
   String? locationId;
   String? locationName;
   int? condition;
   int? track;
-  String? team;
+  int? team;
 
   double? totalVolume;
 
@@ -16,8 +16,8 @@ class PickTaskModel{
   // String? failReason;
   String? pickUpDate;
 
-  PickTaskModel({
-    this.taskDocId,
+  PickRecordModel({
+    this.recordDocId,
     this.pickOrder,
     this.locationId,
     this.locationName,
@@ -32,7 +32,7 @@ class PickTaskModel{
 
   Map<String, dynamic> toMap() {
     return {
-      'pick_doc_id': this.taskDocId,
+      'pick_doc_id': this.recordDocId,
       'pick_order': this.pickOrder,
       'track': this.track,
       'condition': this.condition,
@@ -47,13 +47,13 @@ class PickTaskModel{
     };
   }
 
-  PickTaskModel.fromJson(Map<String, dynamic> json, id,String? locationName) {
-    taskDocId = id;
+  PickRecordModel.fromJson(Map<String, dynamic> json, id) {
+    recordDocId = id;
     pickOrder = json['pick_order'];
     track = json['track'];
     condition = json['condition'];
     locationId = json['location_id'];
-    locationName= locationName??'알수없음';
+    locationName= json['location_name'];
     team = json['team'];
     pickUpDate = (json['pick_up_date'] != null)?dateFormat(json['pick_up_date']):dateFormat(Timestamp.fromDate(DateTime.now()));
     // pickDetails = json['pick_details'].toString();
@@ -67,8 +67,8 @@ class PickTaskModel{
 
 String dateFormat(Timestamp timestamp) {
   var date =
-  DateTime.fromMicrosecondsSinceEpoch(timestamp.microsecondsSinceEpoch)
-      .toString();
+      DateTime.fromMicrosecondsSinceEpoch(timestamp.microsecondsSinceEpoch)
+          .toString();
   var stringToDate = DateFormat('yy-MM-dd HH:mm').parse(date);
   var format = DateFormat('yy/MM/dd HH:mm');
   return format.format(stringToDate);

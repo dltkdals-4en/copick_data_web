@@ -101,6 +101,7 @@ class EnterGridCardWidget extends StatelessWidget {
                                     FilteringTextInputFormatter.allow(
                                         RegExp(r'^[0-9]+.?[0-9]*'))
                                   ],
+
                                   decoration: InputDecoration(
                                     hintText: enter.volumes,
                                     fillColor: KColors.whiteGrey,

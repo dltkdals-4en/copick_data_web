@@ -1,3 +1,4 @@
+import 'package:copick_data_web/pages/location_manage/widgets/location_card_widget.dart';
 import 'package:copick_data_web/providers/admin_provider.dart';
 import 'package:copick_data_web/providers/get_data_provider.dart';
 import 'package:copick_data_web/utilitys/colors.dart';
@@ -11,34 +12,66 @@ class LocationManagePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-    var data = Provider.of<GetDataProvider>(context);
     var admin = Provider.of<AdminProvider>(context);
-    admin.sortLocList(data.locList);
-    var list = admin.locList;
+    admin.sortLocList();
+
     return Container(
-      color: KColors.white,
-      child: Padding(
-        padding: const EdgeInsets.all(NORMALGAP),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
+      decoration: BoxDecoration(
+        color: KColors.white,
+      ),
+      width: size.width / 2,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(NORMALGAP),
+            child: Container(
               child: Text(
                 '수거 카페 관리',
                 style: kContentTextStyle.copyWith(),
               ),
             ),
-            kNorH,
-            Expanded(
-              child: ListView.builder(
-                itemCount: list.length,
-                itemBuilder: (context, index) {
-                  return Text('${list[index].locationName}');
-                },
+          ),
+          kBigH,
+          Padding(
+            padding: const EdgeInsets.all(NORMALGAP),
+            child: Container(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '전체 카페 개수 : ${admin.locTotalList.length} 개',
+                    style: kContentTextStyle.copyWith(fontSize: 20),
+                  ),
+                  TextFormField(
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.search_rounded),
+                    ),
+                    textInputAction: TextInputAction.go,
+                    onFieldSubmitted: (value) {
+                      admin.findLoc(value);
+                    },
+                    // onChanged: (value) {
+                    //   admin.findLoc(value);
+                    // },
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+          kNorH,
+          Expanded(
+            child: ListView.builder(
+              itemCount: admin.locList.length,
+              itemBuilder: (context, index) {
+
+                return (admin.locList.length > 0)
+                    ? LocationCardWidget(index)
+                    : SizedBox();
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

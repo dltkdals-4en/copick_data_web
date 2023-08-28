@@ -65,7 +65,7 @@ class MyApp extends StatelessWidget {
       // Remove the debug banner
       debugShowCheckedModeBanner: false,
       title: '수거량 입력 페이지',
-      initialRoute: Routes.admin,
+      initialRoute: Routes.splash,
       onGenerateRoute: RouteGenerator.generateRoute,
       theme: ThemeData(
         scaffoldBackgroundColor: KColors.backgroundGrey,
