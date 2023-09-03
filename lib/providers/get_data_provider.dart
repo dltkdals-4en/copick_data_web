@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:copick_data_web/models/pick_task_model.dart';
+import 'package:copick_data_web/providers/http_helper.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -101,7 +102,7 @@ class GetDataProvider with ChangeNotifier {
 
   Future<void> updateVolumes(PickRecordModel card, String volumes) async {
     var totalVolumes = double.parse(volumes);
-
+    await HttpHelper().addWasteInfo(card, volumes);
     await FbHelper().updateVolumes(card, totalVolumes).then((value) async {
       notifyListeners();
     });
