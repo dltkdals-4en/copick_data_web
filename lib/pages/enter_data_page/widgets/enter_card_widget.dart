@@ -73,7 +73,7 @@ class EnterCardWidget extends StatelessWidget {
                           ),
                           padding: EdgeInsets.zero,
                         )
-                      : (card.totalVolume == null || card.totalVolume == 0)
+                      : (card.totalVolume == null)
                           ? DataInsertBtn(index)
                           : ElevatedButton(
                               onPressed: () {
