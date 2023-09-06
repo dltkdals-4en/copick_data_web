@@ -73,11 +73,10 @@ class HttpHelper {
     int? pickType;
     (card.team! < 40) ? pickType = 0 : pickType = 1;
     String now = DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
-    // print('$cafeCode ${cafeCode.runtimeType} // $pickGroup ${pickGroup.runtimeType}// $pickWaste ${pickGroup.runtimeType}// $pickType ${pickType.runtimeType} // $now');
-    Uri.https('','');
+
     var response = await http.post(
       Uri.parse(
-          'https://foureniotdata.cafe24.com/anseong/api/addWasteInfoForWeb.php'),
+          'https://foureniotdata.cafe24.com/anseong/api/addWasteInfo.php'),
       headers: <String, String>{
         'Content-Type': 'application/json',
       },

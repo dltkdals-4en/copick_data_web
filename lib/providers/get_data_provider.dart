@@ -35,7 +35,7 @@ class GetDataProvider with ChangeNotifier {
   List<PickTaskModel> taskList = [];
   bool hasLocData = false;
   bool hasRecordData = false;
-  bool hasTaskData = false;
+  bool hasTaskData =false;
 
   // Future<void> locVersionCheck() async {
   //   final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -67,8 +67,7 @@ class GetDataProvider with ChangeNotifier {
   Future<void> getRecordList() async {
     if (hasRecordData == false) {
       print('getRecord');
-      QuerySnapshot<Map<String, dynamic>> data =
-          await FbHelper().getRecordData();
+      QuerySnapshot<Map<String, dynamic>> data = await FbHelper().getRecordData();
       recordList.clear();
       for (var element in data.docs) {
         recordList.add(PickRecordModel.fromJson(element.data(), element.id));
@@ -78,25 +77,22 @@ class GetDataProvider with ChangeNotifier {
       notifyListeners();
     }
   }
-
   Future<void> getTaskList() async {
     if (hasTaskData == false) {
       print('getTask');
-      QuerySnapshot<Map<String, dynamic>> data =
-          await FbHelper().getTaskData(null);
+      QuerySnapshot<Map<String, dynamic>> data = await FbHelper().getTaskData(null);
       taskList.clear();
       for (var element in data.docs) {
-        var locationName = locList
-            .firstWhere((e) => e.locationId == element.data()['location_id'])
-            .locationName;
-        taskList.add(
-            PickTaskModel.fromJson(element.data(), element.id, locationName));
+        var locationName = locList.firstWhere((e) => e.locationId == element.data()['location_id']).locationName;
+        taskList.add(PickTaskModel.fromJson(element.data(), element.id, locationName));
       }
       print(taskList.length);
       hasTaskData = true;
       notifyListeners();
     }
   }
+
+
 
   init() {
     hasRecordData = false;
@@ -106,11 +102,9 @@ class GetDataProvider with ChangeNotifier {
 
   Future<void> updateVolumes(PickRecordModel card, String volumes) async {
     var totalVolumes = double.parse(volumes);
-
+    await HttpHelper().addWasteInfo(card, volumes);
     await FbHelper().updateVolumes(card, totalVolumes).then((value) async {
-      await HttpHelper().addWasteInfo(card, volumes).then((value) {
-        notifyListeners();
-      });
+      notifyListeners();
     });
   }
 
